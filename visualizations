@@ -1,0 +1,76 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data from the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+total_ambassadors = [100, 122, 123, 123, 123, 133, 133, 70, 78, 79, 79]
+active_ambassadors = [29, 29, 29, 33, 32, 29, 34, 51, 41, 36, 35]
+
+# Ensure these lists also have the correct number of entries (same as months, starting from the second month for percentages)
+percent_changes_total = ['+22%', '+1%', '0%', '0%', '+8%', '0%', '-47%', '+11%', '+1%', '0%', '0%']  # Add percentages for July and August
+percent_changes_active = ['0%', '0%', '+14%', '-3%', '-9%', '+17%', '+50%', '-20%', '-12%', '-3%']  # Add percentages for July and August
+
+
+# Create bar chart
+bar_width = 0.35
+x = np.arange(len(months))
+
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Bars for Total Approved Ambassadors
+total_bars = ax.bar(x - bar_width/1.5, total_ambassadors, bar_width, label='Total Approved Ambassadors', color='#005B82')
+
+# Bars for Total Active Ambassadors
+active_bars = ax.bar(x + bar_width/1.5, active_ambassadors, bar_width, label='Total Active Ambassadors', color='#F68A29')
+
+# Add percentage and number labels above bars
+for i in range(len(months)):
+    # Add total ambassador numbers
+    ax.text(x[i] - bar_width/1.5, total_ambassadors[i] + 3, f'{total_ambassadors[i]}', ha='center', color='#005B82', fontweight='bold')
+    # Add active ambassador numbers
+    ax.text(x[i] + bar_width/1.5, active_ambassadors[i] + 3, f'{active_ambassadors[i]}', ha='center', color='#F68A29', fontweight='bold')
+
+    # Skip percentage change on the first bar, as there's no previous comparison
+    if i > 0:  # Start showing percentage changes from the second bar onward
+        # Adjust the index for the percentage lists (i-1) because percentage lists don't have an entry for the first month
+        # Add total ambassador percentage change with color logic
+        if '-' in percent_changes_total[i-1]:  # Offset the index by 1
+            ax.text(x[i] - bar_width/1.5, total_ambassadors[i] + 10, f'{percent_changes_total[i-1]}', ha='center', color='red', fontweight='bold')
+        else:
+            ax.text(x[i] - bar_width/1.5, total_ambassadors[i] + 10, f'{percent_changes_total[i-1]}', ha='center', color='green', fontweight='bold')
+
+        # Add active ambassador percentage change with color logic
+        if '-' in percent_changes_active[i-1]:  # Offset the index by 1
+            ax.text(x[i] + bar_width/1.5, active_ambassadors[i] + 10, f'{percent_changes_active[i-1]}', ha='center', color='red', fontweight='bold')
+        else:
+            ax.text(x[i] + bar_width/1.5, active_ambassadors[i] + 10, f'{percent_changes_active[i-1]}', ha='center', color='green', fontweight='bold')
+
+# Set y-axis increments to 20, with a limit of 220
+ax.set_yticks(np.arange(0, 241, 20))
+ax.set_ylim(0, 220)
+
+# Add horizontal grid lines
+ax.grid(axis='y', linestyle='--', color='gray', alpha=0.7)
+
+# Add a blue dashed line for the goal at 216
+ax.axhline(y=216, color='darkblue', linestyle='--', linewidth=2, label='Goal = 216')
+
+# Add vertical red dashed line to show the transition to the web-based app after April
+ax.axvline(x=6.5, color='red', linestyle='--', linewidth=2, label='Transition to web-based app')
+
+# Add some text for the title, axis labels, and legend
+ax.set_xlabel('Month-Year')
+ax.set_ylabel('Number of Ambassadors')
+ax.set_title('53% of approved CITT Ambassadors are active after transitioning to web-based application')
+ax.set_xticks(x)
+ax.set_xticklabels(months)
+
+# Adjust the goal annotation box outside the chart area
+ax.annotate('Goal = 216*', xy=(0.99, 1.02), xycoords='axes fraction', fontsize=10, color='darkblue',
+            ha='right', va='bottom', bbox=dict(boxstyle='round,pad=0.3', edgecolor='darkblue', facecolor='white'))
+
+# Add legend
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), fancybox=True, shadow=False, ncol=2)
+
+plt.tight_layout()
+plt.show()
