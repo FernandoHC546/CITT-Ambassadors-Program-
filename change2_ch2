@@ -1,0 +1,65 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data from the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+routes_with_coverage = [90, 95, 79, 82, 90, 93, 92, 110, 91, 99, 98]
+percent_changes = ['+6%', '-17%', '+4%', '+10%', '+3%', '-1%', '+20%', '-17%', '+9%', '-1%', '0%']  # Ensure there are 11 values
+
+# Create bar chart
+bar_width = 0.35
+x = np.arange(len(months))
+
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Bars for Routes with Ambassador Coverage
+bars = ax.bar(x, routes_with_coverage, bar_width, label='Routes with Ambassador Coverage', color='#005B82')
+
+# Add numbers inside the bars (with white color)
+for i in range(len(months)):
+    ax.text(x[i], routes_with_coverage[i] - 7, f'{routes_with_coverage[i]}', ha='center', color='white', fontweight='bold', fontsize=9)
+
+# Add percentage labels above bars
+for i in range(len(months)):
+    if '-' in percent_changes[i]:  # Negative percentage (red)
+        ax.text(x[i], routes_with_coverage[i] + 2, f'{percent_changes[i]}', ha='center', color='red', fontweight='bold', fontsize=10)
+    else:  # Positive percentage (green)
+        ax.text(x[i], routes_with_coverage[i] + 2, f'{percent_changes[i]}', ha='center', color='green', fontweight='bold', fontsize=10)
+
+# Set y-axis increments to 20, with a limit of 220
+ax.set_yticks(np.arange(0, 241, 20))
+ax.set_ylim(0, 220)
+
+# Add horizontal grid lines
+ax.grid(axis='y', linestyle='--', color='gray', alpha=0.7)
+
+# Add a blue dashed line for the goal at 216
+ax.axhline(y=216, color='darkblue', linestyle='--', linewidth=2, label='Goal = 216')
+
+# Set axis labels and title
+ax.set_xlabel('Month-Year')
+ax.set_ylabel('Number of Routes with Ambassador Coverage')
+ax.set_title('Approximately one-half of Routes/Stations Have Ambassador Coverage', pad=20)
+ax.set_xticks(x)
+ax.set_xticklabels(months)
+
+# Adjust the goal annotation box outside the chart area
+ax.annotate('Goal = 216*', xy=(0.99, 1.02), xycoords='axes fraction', fontsize=10, color='darkblue',
+            ha='right', va='bottom', bbox=dict(boxstyle='round,pad=0.3', edgecolor='darkblue', facecolor='white'))
+
+# Add custom statement below the graph, moved lower to avoid overlap with legend
+ax.text(0.5, -0.38, '*Current Goal of 216 = 70 Municipal Routes, 22 Municipal On-Demand, 70 DTPW Routes, '
+                    '10 DTPW MetroConnect, 23 Metrorail Stations, 21 Metromover Stations',
+        ha='center', va='center', fontsize=10, color='black', transform=ax.transAxes)
+
+# Add a linear trend line
+z = np.polyfit(x, routes_with_coverage, 1)
+p = np.poly1d(z)
+plt.plot(x, p(x), color='blue', label='Linear (Routes with Ambassador Program)')
+
+# Place the legend below the chart, outside the plot area, and include trend line in legend
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), fancybox=True, shadow=False, ncol=1)
+
+plt.tight_layout()
+plt.show()
+
