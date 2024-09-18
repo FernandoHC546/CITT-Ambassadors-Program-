@@ -1,0 +1,61 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+completed_surveys = [592, 489, 541, 650, 619, 531, 742, 706, 607, 694, 902]
+percent_changes = ['-17%', '+11%', '+20%', '-5%', '-14%', '+40%', '-5%', '-14%', '+14%', '+30%']
+
+# Create a line chart
+x = np.arange(len(months))
+
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Plot the line for completed surveys
+ax.plot(x, completed_surveys, marker='o', color='#007e82', label='Completed Surveys', linewidth=2)
+
+# Add numbers next to the points on the line
+for i in range(len(months)):
+    ax.text(x[i], completed_surveys[i] - 45, f'{completed_surveys[i]}', ha='center', color='black', fontweight='bold', fontsize=10)
+
+# Add percentage labels above the line
+for i in range(1, len(months)):  # Skipping the first point for percentage change
+    if '-' in percent_changes[i-1]:  # Negative percentage (red)
+        ax.text(x[i], completed_surveys[i] + 20, f'{percent_changes[i-1]}', ha='center', color='red', fontweight='bold', fontsize=10)
+    else:  # Positive percentage (green)
+        ax.text(x[i], completed_surveys[i] + 20, f'{percent_changes[i-1]}', ha='center', color='green', fontweight='bold', fontsize=10)
+
+# Set y-axis increments to 100, with a limit of 1000
+ax.set_yticks(np.arange(0, 1001, 100))
+ax.set_ylim(0, 1000)
+
+# Add a blue dashed line for the goal at 840
+ax.axhline(y=840, color='blue', linestyle='--', linewidth=2, label='Goal = 840')
+
+# Add a red vertical dashed line after April to indicate transition
+ax.axvline(x=6.5, color='red', linestyle='--', linewidth=2, label='Transition to web-based app')
+
+# Set axis labels and title
+ax.set_xlabel('Month-Year')
+ax.set_ylabel('Number of Completed Surveys')
+ax.set_title('Trend of Completed Surveys is on the Rise', pad=20)
+
+# Set the x-ticks and ensure the labels are displayed straight (no rotation)
+ax.set_xticks(x)
+ax.set_xticklabels(months)
+
+ax.annotate('Goal = 840*', xy=(0.99, 1.02), xycoords='axes fraction', fontsize=10, color='darkblue',
+            ha='right', va='bottom', bbox=dict(boxstyle='round,pad=0.3', edgecolor='darkblue', facecolor='white'))
+
+# Add custom statement above the chart for growth percentage
+ax.text(1.50, 950, 'Approximately 52.4% Growth Since Oct-23', ha='center', color='red', fontweight='bold', fontsize=12)
+
+# Add custom statement below the chart for the goal explanation
+ax.text(0.5, -0.35, '*Goal of 840 (42% growth) = 70 ambassadors x 1 ride per day x 12 days',
+        ha='center', va='center', fontsize=10, color='black', transform=ax.transAxes)
+
+# Place the legend below the chart, outside the plot area, and include trend line in legend
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.10), fancybox=True, shadow=False, ncol=1)
+
+plt.tight_layout()
+plt.show()
