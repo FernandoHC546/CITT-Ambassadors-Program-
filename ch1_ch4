@@ -1,0 +1,95 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.ticker import FuncFormatter
+
+# Data for the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+very_unsafe = [2, 1, 6, 1, 1, 1, 0, 1, 1, 2, 2]  # Very Unsafe (Red)
+slightly_unsafe = [1, 3, 3, 0, 1, 2, 5, 4, 7, 2, 5]  # Slightly Unsafe (Orange)
+somewhat_safe = [20, 19, 29, 10, 25, 27, 61, 45, 32, 36, 42]  # Somewhat Safe (Yellowish Green)
+safe = [128, 103, 151, 158, 179, 133, 215, 268, 207, 245, 309]  # Safe (Green)
+very_safe = [441, 363, 352, 481, 413, 368, 461, 388, 360, 409, 544]  # Very Safe (Dark Green)
+
+# Total responses for each month
+totals = [sum(x) for x in zip(very_unsafe, slightly_unsafe, somewhat_safe, safe, very_safe)]
+
+# Calculate percentages
+very_unsafe_perc = [v / t * 100 for v, t in zip(very_unsafe, totals)]
+slightly_unsafe_perc = [v / t * 100 for v, t in zip(slightly_unsafe, totals)]
+somewhat_safe_perc = [v / t * 100 for v, t in zip(somewhat_safe, totals)]
+safe_perc = [v / t * 100 for v, t in zip(safe, totals)]
+very_safe_perc = [v / t * 100 for v, t in zip(very_safe, totals)]
+
+# Create a larger figure to accommodate the table and chart
+fig, ax = plt.subplots(figsize=(12, 8))  # Adjusted to a larger size
+
+# Stacking the bars with percentages but reversed order (start from "Very Safe")
+ax.bar(np.arange(len(months)), very_safe_perc, label='Very Safe', color='#006400')  # Dark green
+ax.bar(np.arange(len(months)), safe_perc, bottom=np.array(very_safe_perc), label='Safe', color='green')
+ax.bar(np.arange(len(months)), somewhat_safe_perc, bottom=np.array(very_safe_perc) + np.array(safe_perc), label='Somewhat Safe', color='#BFFF00')  # Yellowish green
+ax.bar(np.arange(len(months)), slightly_unsafe_perc, bottom=np.array(very_safe_perc) + np.array(safe_perc) + np.array(somewhat_safe_perc), label='Slightly Unsafe', color='orange')
+ax.bar(np.arange(len(months)), very_unsafe_perc, bottom=np.array(very_safe_perc) + np.array(safe_perc) + np.array(somewhat_safe_perc) + np.array(slightly_unsafe_perc), label='Very Unsafe', color='red')
+
+# Add the percentage values inside the bars for "Somewhat Safe," "Safe," and "Very Safe" in white
+for i in range(len(months)):
+    # Only show percentages for the larger categories: "Somewhat Safe," "Safe," and "Very Safe"
+    ax.text(i, very_safe_perc[i] / 2, f'{very_safe_perc[i]:.1f}%', ha='center', color='white', fontsize=7, fontweight='bold')
+    ax.text(i, very_safe_perc[i] + safe_perc[i] / 2, f'{safe_perc[i]:.1f}%', ha='center', color='white', fontsize=7, fontweight='bold')
+    ax.text(i, very_safe_perc[i] + safe_perc[i] + somewhat_safe_perc[i] / 2, f'{somewhat_safe_perc[i]:.1f}%', ha='center', color='black', fontsize=6, fontweight='bold')
+
+# Set labels and title
+ax.set_xlabel('Month-Year', fontsize=12)
+ax.set_ylabel('Percentage', fontsize=12)
+ax.set_title('Vast Majority of Ambassadors Feel Very Safe/Safe', fontsize=16, pad=40)  # Increased pad for title
+
+# Set x-ticks and x-tick labels
+ax.set_xticks(np.arange(len(months)))
+ax.set_xticklabels(months, fontsize=10)
+
+# Set y-axis to display percentages
+ax.set_yticks(np.arange(0, 101, 10))
+ax.set_ylim(0, 100)
+
+# Function to format y-axis labels as percentages
+def to_percent(y, _):
+    return f'{int(y)}%'  # Format the y-value as a percentage
+
+# Set the y-axis formatter
+ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+
+# Add a dashed line for the goal (100%)
+ax.axhline(y=100, color='green', linestyle='--', linewidth=2, label='Goal = 100% to Feel Very Safe/Safe')
+
+# Add horizontal grid lines
+ax.grid(axis='y', linestyle='--', color='gray', alpha=0.7)
+
+# Add the table at the top showing "Very Safe / Safe" percentages
+combined_safe = ['96%', '95%', '92%', '98%', '96%', '94%', '91%', '93%', '94%', '94%', '95%']
+the_table = ax.table(cellText=[combined_safe],
+                     rowLabels=['Very Safe / Safe'],
+                     colLabels=months,
+                     loc='top',
+                     cellLoc='center',
+                     colColours=['#f5f5f5'] * len(months),
+                     cellColours=[['#f5f5f5'] * len(months)])
+
+# Format the table to remove the box and align properly
+the_table.scale(1, 2.5)  # Increased the scaling slightly to lift the table
+the_table.auto_set_font_size(False)
+the_table.set_fontsize(12)
+the_table.auto_set_column_width(col=list(range(len(months))))
+
+# Add average percentage text on the right
+ax.text(9.8, 102, '94% AVG', ha='center', color='green', fontweight='bold', fontsize=12)
+
+# Add a legend outside the chart
+ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+
+# Add a custom statement below the legend
+ax.text(1.02, 0.5, 'Goal = 100% to Feel Very Safe/Safe', ha='left', va='center', color='green', fontsize=10, transform=ax.transAxes)
+
+# Adjust the margins to make more space for the table and chart
+plt.subplots_adjust(top=0.60, bottom=0.1, left=0.1, right=1.0)  # Adjusted top margin
+
+# Show the chart
+plt.show()
