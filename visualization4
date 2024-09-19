@@ -1,0 +1,66 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+very_unsafe = [3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # Very Unsafe (Red)
+slightly_unsafe = [22, 21, 28, 24, 29, 25, 29, 38, 34, 35, 34]  # Slightly Unsafe (Orange)
+somewhat_safe = [74, 74, 65, 74, 67, 69, 62, 59, 59, 59, 60]  # Somewhat Safe (Yellowish Green)
+safe = [0, 0, 5, 2, 4, 5, 5, 6, 5, 5, 5]  # Safe (Green)
+very_safe = [96, 95, 92, 98, 96, 94, 91, 93, 94, 94, 95]  # Very Safe (Dark Green)
+
+# Combined percentages for the table (Safe + Very Safe)
+combined_safe = [96, 95, 92, 98, 96, 94, 91, 93, 94, 94, 95]
+
+# Create a larger figure to accommodate the table and chart
+fig, ax = plt.subplots(figsize=(12, 8))  # Adjusted to a larger size
+
+# Stacking the bars
+ax.bar(np.arange(len(months)), very_unsafe, label='Very Unsafe', color='red')
+ax.bar(np.arange(len(months)), slightly_unsafe, bottom=very_unsafe, label='Slightly Unsafe', color='orange')
+ax.bar(np.arange(len(months)), somewhat_safe, bottom=np.array(very_unsafe) + np.array(slightly_unsafe), label='Somewhat Safe', color='#BFFF00')  # Yellowish green
+ax.bar(np.arange(len(months)), safe, bottom=np.array(very_unsafe) + np.array(slightly_unsafe) + np.array(somewhat_safe), label='Safe', color='green')
+ax.bar(np.arange(len(months)), very_safe, bottom=np.array(very_unsafe) + np.array(slightly_unsafe) + np.array(somewhat_safe) + np.array(safe), label='Very Safe', color='#006400')  # Dark green
+
+# Set labels and title
+ax.set_xlabel('Month-Year', fontsize=12)
+ax.set_ylabel('Percentage', fontsize=12)
+ax.set_title('Vast Majority of Ambassadors Feel Very Safe/Safe', fontsize=16, pad=20)
+
+# Set x-ticks and x-tick labels
+ax.set_xticks(np.arange(len(months)))
+ax.set_xticklabels(months, fontsize=10)
+
+# Set y-axis to display percentages
+ax.set_yticks(np.arange(0, 101, 10))
+ax.set_ylim(0, 100)
+
+# Add a dashed line for the goal (100%)
+ax.axhline(y=100, color='green', linestyle='--', linewidth=2, label='Goal = 100% to Feel Very Safe/Safe')
+
+# Add the table at the top showing "Very Safe / Safe" percentages
+the_table = ax.table(cellText=[combined_safe],
+                     rowLabels=['Very Safe / Safe'],
+                     colLabels=months,
+                     loc='top',
+                     cellLoc='center',
+                     colColours=['#f5f5f5'] * len(months),
+                     cellColours=[['#f5f5f5'] * len(months)])
+
+# Format the table to remove the box and align properly
+the_table.scale(1, 1.2)
+the_table.auto_set_font_size(False)
+the_table.set_fontsize(12)
+the_table.auto_set_column_width(col=list(range(len(months))))
+
+# Add average percentage text on the right
+ax.text(10.5, 50, '94% AVG', ha='center', color='green', fontweight='bold', fontsize=12)
+
+# Add a legend outside the chart
+ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+
+# Adjust the margins to make more space for the table and chart
+plt.subplots_adjust(top=0.65, bottom=0.1, left=0.1, right=0.85)
+
+# Show the chart
+plt.show()
