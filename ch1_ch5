@@ -1,0 +1,66 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for the chart
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+
+# Ensure all lists have 11 entries (same length as 'months')
+on_time = [73, 64, 71, 78, 78, 81, 85, 87, 77, 77, 76]  # On-time percentages
+early = [11, 15, 13, 11, 11, 10, 7, 6, 12, 14, 15]      # Early percentages
+late = [8, 11, 9, 8, 8, 6, 5, 4, 5, 5, 4]              # Late percentages
+unknown = [8, 10, 7, 3, 3, 3, 3, 3, 6, 4, 5]           # Unknown percentages
+
+# Create a figure and axis
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# Bar width and positions
+bar_width = 0.2
+x = np.arange(len(months))
+
+# Plot the bars next to each other for each month
+ax.bar(x - bar_width*1.5, on_time, width=bar_width, label='On-time', color='#005b82')
+ax.bar(x - bar_width/2, early, width=bar_width, label='Early', color='green')
+ax.bar(x + bar_width/2, late, width=bar_width, label='Late', color='orange')
+ax.bar(x + bar_width*1.5, unknown, width=bar_width, label='Unknown', color='gray')
+
+# Set x-ticks and labels
+ax.set_xticks(x)
+ax.set_xticklabels(months)
+
+# Add percentages above the bars
+for i in range(len(months)):
+    ax.text(x[i] - bar_width*1.5, on_time[i] + 1, f'{on_time[i]}%', ha='center', color='black', fontweight='bold', fontsize=9)
+    ax.text(x[i] - bar_width/2, early[i] + 1, f'{early[i]}%', ha='center', color='black', fontweight='bold', fontsize=9)
+    ax.text(x[i] + bar_width/2, late[i] + 1, f'{late[i]}%', ha='center', color='black', fontweight='bold', fontsize=9)
+    ax.text(x[i] + bar_width*1.5, unknown[i] + 1, f'{unknown[i]}%', ha='center', color='black', fontweight='bold', fontsize=9)
+
+# Add a dashed line for the goal
+ax.axhline(y=78, color='blue', linestyle='--', linewidth=2, label='Goal = 78%')
+
+# Set y-axis to display 0%, 25%, 50%, 75%, and 100%
+ax.set_yticks([0, 25, 50, 75, 100])
+ax.set_ylim(0, 100)
+
+# Function to format y-axis labels as percentages
+def to_percent(y, _):
+    return f'{int(y)}%'  # Format the y-value as a percentage
+
+# Set the y-axis formatter to show percentage signs
+ax.yaxis.set_major_formatter(plt.FuncFormatter(to_percent))
+
+# Set labels and title
+ax.set_xlabel('Month-Year', fontsize=12)
+ax.set_ylabel('Percentage', fontsize=12)
+ax.set_title('Metrobus On-Time Performance', fontsize=16, pad=20)
+
+# Add horizontal grid lines
+ax.grid(axis='y', linestyle='--', color='gray', alpha=0.7)
+
+# Add a legend
+ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1))
+
+# Adjust layout for clarity
+plt.tight_layout()
+
+# Show the chart
+plt.show()
