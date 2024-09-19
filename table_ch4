@@ -1,0 +1,33 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for the table
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+combined_safe = ['96%', '95%', '92%', '98%', '96%', '94%', '91%', '93%', '94%', '94%', '95%']
+
+# Create a figure
+fig, ax = plt.subplots(figsize=(8, 2))  # Adjust figure size as needed
+
+# Hide axes
+ax.xaxis.set_visible(False) 
+ax.yaxis.set_visible(False)
+ax.set_frame_on(False)
+
+# Create table
+the_table = ax.table(cellText=[combined_safe],
+                     rowLabels=['Very Safe / Safe'],
+                     colLabels=months,
+                     cellLoc='center',
+                     loc='center')
+
+# Format the table
+the_table.scale(1, 1.5)  # Adjust scaling
+the_table.auto_set_font_size(False)
+the_table.set_fontsize(12)
+the_table.auto_set_column_width(col=list(range(len(months))))
+
+#"94% AVG" text in green next to the table
+ax.text(1.18, 0.4, '94% AVG', ha='center', va='center', color='green', fontweight='bold', fontsize=12, transform=ax.transAxes)
+
+# Display the table
+plt.show()
