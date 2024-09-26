@@ -1,0 +1,81 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for each category by month
+months = ['Oct-23', 'Nov-23', 'Dec-23', 'Jan-24', 'Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24']
+very_unsafe = [2, 1, 6, 1, 1, 1, 0, 1, 1, 2, 2]
+slightly_unsafe = [1, 3, 3, 0, 1, 2, 5, 4, 7, 2, 5]
+somewhat_safe = [20, 19, 29, 10, 25, 27, 61, 45, 32, 36, 42]
+safe = [128, 103, 151, 158, 179, 133, 215, 268, 207, 245, 309]
+very_safe = [441, 363, 352, 481, 413, 368, 461, 388, 360, 409, 544]
+
+# Calculate total responses for each month to convert to percentages
+totals = [sum(values) for values in zip(very_unsafe, slightly_unsafe, somewhat_safe, safe, very_safe)]
+
+# Convert raw numbers to percentages
+very_unsafe_perc = [(v / total) * 100 for v, total in zip(very_unsafe, totals)]
+slightly_unsafe_perc = [(v / total) * 100 for v, total in zip(slightly_unsafe, totals)]
+somewhat_safe_perc = [(v / total) * 100 for v, total in zip(somewhat_safe, totals)]
+safe_perc = [(v / total) * 100 for v, total in zip(safe, totals)]
+very_safe_perc = [(v / total) * 100 for v, total in zip(very_safe, totals)]
+
+# List of categories and colors for the bar charts
+categories = ['Very Unsafe', 'Slightly Unsafe', 'Somewhat Safe', 'Safe', 'Very Safe']
+colors = ['red', 'orange', '#BFFF00', 'green', '#006400']
+
+# Loop through each month and plot a bar chart
+fig, axes = plt.subplots(3, 4, figsize=(15, 8))  # Adjust the figure size and grid
+axes = axes.flatten()  # Flatten the axes array for easy indexing
+
+from matplotlib.ticker import FuncFormatter
+
+# Function to format y-axis labels as percentages
+def to_percent(y, _):
+    return f'{int(y)}%'  # Format the y-value as a percentage
+
+# Set the y-axis formatter for each subplot
+for ax in axes:
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+
+bar_width = 0.5
+
+for i in range(len(months)):
+    # Data for the bar chart of each month (percentages)
+    data = [very_unsafe_perc[i], slightly_unsafe_perc[i], somewhat_safe_perc[i], safe_perc[i], very_safe_perc[i]]
+    
+    # Create a bar chart for each month
+    axes[i].bar(categories, data, color=colors, width=bar_width)
+
+    # Loop through each month and plot a bar chart
+for i in range(len(months)):
+    # Data for the bar chart of each month (percentages)
+    data = [very_unsafe_perc[i], slightly_unsafe_perc[i], somewhat_safe_perc[i], safe_perc[i], very_safe_perc[i]]
+    
+    # Create a bar chart for each month
+    bars = axes[i].bar(categories, data, color=colors, width=bar_width)
+    axes[i].set_title(f'{months[i]}')  # Set the title for each bar chart
+    axes[i].set_ylim(0, 100)  # Set y-axis to percentages (0-100)
+    axes[i].set_yticks(np.arange(0, 101, 10))  # Set y-axis ticks from 0 to 100 in increments of 10
+    axes[i].tick_params(axis='x', labelrotation=45)  # Rotate x-axis labels for better readability
+
+    # Add percentage values above the bars
+    for bar, perc in zip(bars, data):
+        height = bar.get_height()
+        axes[i].text(bar.get_x() + bar.get_width() / 2, height + 2, f'{perc:.1f}%', ha='center', va='bottom', fontsize=8, fontweight='bold')
+
+    axes[i].set_title(f'{months[i]}')  # Set the title for each bar chart
+    axes[i].set_ylim(0, 100)  # Set y-axis to percentages (0-100)
+    axes[i].set_yticks(np.arange(0, 101, 10))  # Set y-axis ticks from 0 to 100 in increments of 10
+    axes[i].tick_params(axis='x', labelrotation=45)  # Rotate x-axis labels for better readability
+
+# Remove any empty subplots (since there are 11 months, but a 3x4 grid has 12 slots)
+for j in range(len(months), len(axes)):
+    fig.delaxes(axes[j])
+
+# Add a global legend to the side of the chart, matching the colors of the bars
+handles = [plt.Line2D([0], [0], color=color, lw=4) for color in colors]
+fig.legend(handles, categories, loc='center left', bbox_to_anchor=(1.00, 0.89), fontsize=10)
+
+# Adjust the layout so that bar charts are nicely spaced
+plt.tight_layout()
+plt.show()
